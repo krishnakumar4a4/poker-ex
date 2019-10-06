@@ -6,6 +6,7 @@ defmodule Poker.Suite do
   @spades 'S'
   @allSuites [@clubs, @diamonds, @hearts, @spades]
 
+  ###################
   def sortKinds(kindList) do
     Enum.sort(kindList, &(compareKinds(&1,&2)>0))
   end
