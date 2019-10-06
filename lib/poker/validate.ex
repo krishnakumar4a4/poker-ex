@@ -1,12 +1,28 @@
 defmodule Poker.Validate do
+  def noOfPairs(_suiteMap, kindMap) do
+    length(Enum.filter(kindMap, fn x -> elem(x,1) == 2 end))
+  end
+
+  def threeOfKind(_suiteMap, kindMap) do
+    length(Enum.filter(kindMap, fn x -> elem(x,1) == 3 end)) > 0
+  end
+
+  def fourOfKind(_suiteMap, kindMap) do
+    length(Enum.filter(kindMap, fn x -> elem(x,1) == 4 end)) > 0
+  end
+
+  def isFlush(suiteMap, _kindMap) do
+    map_size(suiteMap) == 1
+  end
+
   @doc """
   isStraight check
   """
   def isStraight(_suiteMap, kindMap) do
     cond do
       map_size(kindMap) == 5 ->
-        kindList = Map.keys(kindMap) |> Enum.sort
-        checkStraight(nil, kindList)
+        sortedKindList = Enum.map(kindMap, fn x -> elem(x,0) end) |> Poker.Suite.sortKinds
+        checkStraight(nil, sortedKindList)
       true ->
         false
     end

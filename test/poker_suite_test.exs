@@ -3,12 +3,12 @@ defmodule PokerSuiteTest do
   doctest Poker.Suite
 
   test "compare cards with invalid suites" do
-    assert Poker.Suite.compare('2A','2C') == -1
-    assert Poker.Suite.compare('2A','2B') == -1
+    assert Poker.Suite.compare('2A','2C') == nil
+    assert Poker.Suite.compare('2A','2B') == nil
   end
 
   test "compare cards suites dont match" do
-    assert Poker.Suite.compare('2S','2D') == -1
+    assert Poker.Suite.compare('2S','2D') == nil
   end
 
   test "compare cards of same suite and same value" do
@@ -22,9 +22,9 @@ defmodule PokerSuiteTest do
   end
 
   test "compare cards of same suite and first is lesser than second" do
-    assert Poker.Suite.compare('2C','5C') == 3
-    assert Poker.Suite.compare('2C','QC') == 10
-    assert Poker.Suite.compare('2C','AC') == 12
+    assert Poker.Suite.compare('2C','5C') == -3
+    assert Poker.Suite.compare('2C','QC') == -10
+    assert Poker.Suite.compare('2C','AC') == -12
   end
 
   test "isValidCard" do
