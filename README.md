@@ -1,21 +1,26 @@
 # Poker
+A simple CLI poker game   
+``mix test`` - to run the tests  
+``mix excript.build`` - to compile  
+``./poker`` - runs the application  
 
-**TODO: Add description**
-
-## Installation
-
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `poker` to your list of dependencies in `mix.exs`:
-
-```elixir
-def deps do
-  [
-    {:poker, "~> 0.1.0"}
-  ]
-end
+### Example run
 ```
-
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/poker](https://hexdocs.pm/poker).
+./poker
+Black: 2H 3C 4H 5D TC
+White: 2H 3C 4H 5D TC
+tie
+Black: 2H 3C 4H 5D TC
+White: 2H 3C 4H 5D KC
+White is winner - highcard: K
+Black: 2H 3C 4H KD KC
+White: 2H 3C 4H KD KC
+tie
+Black: 2H 3C 4H KD KC
+White: 2H 3C 5H KD KC
+White is winner - pair: 5
+Black: 1H 3C 5H KD KC
+White: 2H 3C 5H KD KC
+Invalid input from Black
+```
 
