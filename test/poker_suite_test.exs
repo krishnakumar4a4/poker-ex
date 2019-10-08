@@ -33,4 +33,18 @@ defmodule PokerSuiteTest do
     assert Poker.Suite.isValidCard('MA') == false
     assert Poker.Suite.isValidCard('TH') == true
   end
+
+  test "sortKinds" do
+    # high to low sort
+    assert Poker.Suite.sortKinds(['2','Q','J']) == ['Q','J','2']
+    assert Poker.Suite.sortKinds(['A','6','3','T','2']) == ['A','T','6','3','2']
+    assert Poker.Suite.sortKinds(['9','T','J','Q','K','A']) == ['A','K','Q','J','T','9']
+  end
+
+  test "compareKinds" do
+    assert Poker.Suite.compareKinds('2','3') == -1
+    assert Poker.Suite.compareKinds('A','T') == 4
+    assert Poker.Suite.compareKinds('J','J') == 0
+    assert Poker.Suite.compareKinds('1','J') == nil
+  end
 end

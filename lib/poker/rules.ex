@@ -1,10 +1,15 @@
 defmodule Poker.Rules do
+  @moduledoc """
+  Provides all functions for Poker Rules
+  """
   require Poker.Validate
 
   @cardCount 5
   @rankOrder [:highcard, :pair, :twopair, :threeofkind, :straight, :flush, :fullhouse, :fourofkind, :straightflush]
 
-  ###################
+  @doc """
+  Gets the rank as defined in @rankOrder for the given cardList
+  """
   def getRank(cardList) when is_list(cardList) do
     cond do
       length(cardList) != @cardCount ->
@@ -16,7 +21,7 @@ defmodule Poker.Rules do
     end
   end
 
-  def findRank(cardList) do
+  defp findRank(cardList) do
     import Poker.Validate
 
     {suiteMap, kindMap} = mapCards(cardList)
@@ -42,6 +47,9 @@ defmodule Poker.Rules do
     end
   end
 
+  @doc """
+  Returns a tuple of maps segregated by suite and card value(kind)
+  """
   def mapCards(cardList) do
     Enum.reduce(cardList, {%{}, %{}}, fn [k|s], acc ->
       {
@@ -51,23 +59,40 @@ defmodule Poker.Rules do
     end)
   end
 
-  #####################
+  @doc """
+  Compare the given ranks mentioned in @rankOrder
+  Returns positive integer if first rank > second rank, negative if second rank > first rank and 0 otherwise
+  """
   def compareRanks(r1, r2) when r1 in @rankOrder and r2 in @rankOrder do
     indexR1 = Enum.find_index(@rankOrder, &(&1 == r1))
     indexR2 = Enum.find_index(@rankOrder, &(&1 == r2))
     indexR1 - indexR2
   end
 
-  #####################
-  def compareStraightFlushes({_, _suiteMap1, kindMap1}, {_, _suiteMap2, kindMap2}) do
-    # TODO: This can be simplified
+  @doc """
+  Calculates the result of two :straight comparisions
+  Same function could be used for two :straightflush comparisions
+  """
+  def compareStraights(kindMap1, kindMap2) do
     sortedKindList1 = Enum.map(kindMap1, fn x -> elem(x,0) end) |> Poker.Suite.sortKinds
     sortedKindList2 = Enum.map(kindMap2, fn x -> elem(x,0) end) |> Poker.Suite.sortKinds
-    zippedKinds = Enum.zip(sortedKindList1, sortedKindList2)
-    result(compareZips(zippedKinds))
+    k1 = hd sortedKindList1
+    k2 = hd sortedKindList2
+    cond do
+      k1 == k2 ->
+        :tie
+      true ->
+        result({Poker.Suite.compareKinds(k1,k2), k1, k2})
+    end
   end
 
-  def compareNOfKinds(n, {_, _suiteMap1, kindMap1}, {_, _suiteMap2, kindMap2}) do
+  @doc """
+  Calculates the result of two N of kinds comparision
+  N = 2 for two :pair comparisions
+  N = 3 for two :threeofkind comparisions
+  N = 4 for two :fourofkind comparisions
+  """
+  def compareNOfKinds(n, kindMap1, kindMap2) do
     f1 = elem(Enum.filter(kindMap1, fn x -> elem(x,1) == n end) |> hd, 0)
     f2 = elem(Enum.filter(kindMap2, fn x -> elem(x,1) == n end) |> hd, 0)
     if f1 == f2 do
@@ -80,7 +105,10 @@ defmodule Poker.Rules do
     end
   end
 
-  def compareFullHouses({_, _suiteMap1, kindMap1}, {_, _suiteMap2, kindMap2}) do
+  @doc """
+  Calculates the result of two :fullhouse comparisions
+  """
+  def compareFullHouses(kindMap1, kindMap2) do
     f1 = elem(Enum.filter(kindMap1, fn x -> elem(x,1) == 3 end) |> hd, 0)
     f2 = elem(Enum.filter(kindMap2, fn x -> elem(x,1) == 3 end) |> hd, 0)
     if f1 == f2 do
@@ -97,7 +125,10 @@ defmodule Poker.Rules do
     end
   end
 
-  def compareTwoPairs({_, _suiteMap1, kindMap1}, {_, _suiteMap2, kindMap2}) do
+  @doc """
+  Calculates the result of two :twopair comparisions
+  """
+  def compareTwoPairs(kindMap1, kindMap2) do
     p1 = Enum.filter(kindMap1, fn x -> elem(x,1) == 2 end) |> Enum.map(fn x -> elem(x,0) end) |> Poker.Suite.sortKinds
     p2 = Enum.filter(kindMap2, fn x -> elem(x,1) == 2 end) |> Enum.map(fn x -> elem(x,0) end) |> Poker.Suite.sortKinds
     zippedKinds = Enum.zip(p1, p2)
@@ -116,7 +147,11 @@ defmodule Poker.Rules do
     end
   end
 
-  def compareHighcards({_, _suiteMap1, kindMap1}, {_, _suiteMap2, kindMap2}) do
+  @doc """
+  Calculates the result of two :highcard comparisions
+  Same function could be used for two :flush comparisions
+  """
+  def compareHighcards(kindMap1, kindMap2) do
     sortedKindList1 = Enum.map(kindMap1, fn x -> elem(x,0) end) |> Poker.Suite.sortKinds
     sortedKindList2 = Enum.map(kindMap2, fn x -> elem(x,0) end) |> Poker.Suite.sortKinds
     zippedKinds = Enum.zip(sortedKindList1, sortedKindList2)
@@ -125,9 +160,9 @@ defmodule Poker.Rules do
 
   defp result(res) do
     case res do
-      {diff, k1, k2} when diff > 0 ->
+      {diff, k1, _k2} when diff > 0 ->
         {:winner, 1, k1}
-      {diff, k1, k2} when diff < 0 ->
+      {diff, _k1, k2} when diff < 0 ->
         {:winner, 2, k2}
       :tie ->
         :tie

@@ -1,4 +1,7 @@
 defmodule Poker.Suite do
+  @moduledoc """
+  Provides set of functions on card suite
+  """
   @valueOrder ['2','3','4','5','6','7','8','9','T','J','Q','K','A']
   @clubs 'C'
   @diamonds 'D'
@@ -6,13 +9,18 @@ defmodule Poker.Suite do
   @spades 'S'
   @allSuites [@clubs, @diamonds, @hearts, @spades]
 
-  ###################
+  @doc """
+  Sorts the card values in the order they are defined in the @valueOrder
+  """
   def sortKinds(kindList) do
     Enum.sort(kindList, &(compareKinds(&1,&2)>0))
   end
 
-  ##################
-  def compareKinds([fh|_] = first, [sh|_] = second) when [fh] in @valueOrder or [sh] in @valueOrder do
+  @doc """
+  Compare the card values
+  Returns positive value if first > second as per values defined in the @valueOrder, nil otherwise
+  """
+  def compareKinds([fh|_] = _first, [sh|_] = _second) when [fh] in @valueOrder or [sh] in @valueOrder do
       indexCompare(fh,sh)
   end
 
@@ -20,8 +28,11 @@ defmodule Poker.Suite do
     nil
   end
 
-  ###################
-  def compare([fh|fs] = first, [sh|ss] = second) when ([fh] in @valueOrder or [sh] in @valueOrder) and (fs in @allSuites or ss in @allSuites) do
+  @doc """
+  Compare card values with suite information
+  Returns positive value if first > second as per values defined in the @valueOrder, nil otherwise
+  """
+  def compare([fh|fs] = _first, [sh|ss] = _second) when ([fh] in @valueOrder or [sh] in @valueOrder) and (fs in @allSuites or ss in @allSuites) do
     cond do
       fs == ss ->
         indexCompare(fh,sh)
@@ -47,8 +58,11 @@ defmodule Poker.Suite do
     end
   end
 
-  ###################
-  def isValidCard([h|s] = card) when s in @allSuites and [h] in @valueOrder do
+  @doc """
+  Checks if the card value and suite information are valid as defined in @allSuites and @valueOrder
+  Returns boolean
+  """
+  def isValidCard([h|s] = _card) when s in @allSuites and [h] in @valueOrder do
     true
   end
 
