@@ -9,7 +9,7 @@ defmodule Poker do
   @doc """
   Starts the Poker application
   """
-  def start do
+  def main(_args) do
     readPlayersInput()
   end
 
